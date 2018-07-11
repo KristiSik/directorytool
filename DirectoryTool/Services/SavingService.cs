@@ -4,31 +4,33 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DirectoryTool.Services
 {
     public class SavingService
     {
-
         public void Save(string folderPath)
         {
-            Folder folder = new Folder
-            {
-                Name = "12345",
-                SubFolders = GetSubFolders(folderPath),
-                Files = GetFiles(folderPath)
-            };
-            FileStream fileStream = new FileStream("datafile.dat", FileMode.OpenOrCreate);
+            Folder folder;
+            FileStream fileStream = new FileStream("datafile.dat", FileMode.Create);
             BinaryFormatter formatter = new BinaryFormatter();
             try
             {
+                folder = new Folder
+                {
+                    Name = folderPath.Split(Path.DirectorySeparatorChar).Last() ?? folderPath,
+                    SubFolders = GetSubFolders(folderPath),
+                    Files = GetFiles(folderPath)
+                };
                 formatter.Serialize(fileStream, folder);
+            }
+            catch(DirectoryNotFoundException e)
+            {
+                InfoService.ShowErrorMessage(e.Message);
             }
             catch(SerializationException e)
             {
-                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
+                InfoService.ShowErrorMessage("Failed to save. Reason: " + e.Message);
             }
             finally
             {
@@ -37,6 +39,8 @@ namespace DirectoryTool.Services
         }
         private List<Folder> GetSubFolders(string folderPath)
         {
+            if (!Directory.Exists(folderPath))
+                throw new DirectoryNotFoundException("Directory not found.");
             string[] subDirectories = Directory.GetDirectories(@folderPath);
             if (subDirectories.Length == 0)
             {
