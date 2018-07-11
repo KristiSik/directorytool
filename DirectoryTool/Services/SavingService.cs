@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -9,17 +10,22 @@ namespace DirectoryTool.Services
 {
     public class SavingService
     {
-        public void Save(string folderPath)
+        public void Save(string folderPath, string fileName)
         {
             folderPath = Path.GetFullPath(folderPath);
+            string rootFolderName = folderPath.Split(Path.DirectorySeparatorChar).Last();
+            if (String.IsNullOrEmpty(fileName))
+            {
+                fileName = rootFolderName;
+            }
             Folder folder;
-            FileStream fileStream = new FileStream("datafile.dat", FileMode.Create);
+            FileStream fileStream = new FileStream(fileName + "." + ConfigurationManager.AppSettings["SavedFileFormat"], FileMode.Create);
             BinaryFormatter formatter = new BinaryFormatter();
             try
             {
                 folder = new Folder
                 {
-                    Name = folderPath.Split(Path.DirectorySeparatorChar).Last(),
+                    Name = rootFolderName,
                     SubFolders = GetSubFolders(folderPath),
                     Files = GetFiles(folderPath)
                 };

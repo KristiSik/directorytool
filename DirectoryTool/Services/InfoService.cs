@@ -13,7 +13,7 @@ namespace DirectoryTool.Services
         {
             Commands = new Dictionary<string, string>
             {
-                { "-s <folder path>", "saving folder (including files and subfolders) into file" },
+                { "-s <folder path> <file name>", "saving folder (including files and subfolders) into file" },
                 { "-u <file path> <directory path>", "unpacking folder from file into selected directory" }
             };
         }

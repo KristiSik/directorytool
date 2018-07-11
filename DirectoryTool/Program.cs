@@ -21,7 +21,13 @@ namespace DirectoryTool
                     case "s":
                         if (args.Length < 2)
                             throw new WrongCommandLineArguments("Folder path is not specified.");
-                        SavingService.Save(@args[1]);
+                        if (args.Length < 3)
+                        {
+                            SavingService.Save(@args[1], null);
+                        } else
+                        {
+                            SavingService.Save(@args[1], @args[2]);
+                        }
                         break;
                     case "u":
                         if (args.Length < 2)
@@ -30,10 +36,10 @@ namespace DirectoryTool
                         }
                         if (args.Length < 3)
                         {
-                            UnpackingService.Unpack(args[1], null);
+                            UnpackingService.Unpack(@args[1], null);
                         } else
                         {
-                            UnpackingService.Unpack(args[1], args[2]);
+                            UnpackingService.Unpack(@args[1], @args[2]);
                         }
                         break;
                     default:
@@ -48,7 +54,6 @@ namespace DirectoryTool
             {
                 InfoService.ShowErrorMessage(e.Message);
             }
-            Console.ReadKey();
         }
     }
 }
