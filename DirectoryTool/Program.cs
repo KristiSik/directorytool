@@ -9,29 +9,32 @@ namespace DirectoryTool
     class Program
     {
         private static SavingService SavingService { get; set; } = new SavingService();
+        private static UnpackingService UnpackingService { get; set; } = new UnpackingService();
         static void Main(string[] args)
         {
             try
             {
                 if (args.Length == 0)
                     throw new WrongCommandLineArguments("Arguments are not specified.");
-                switch (args[0])
+                switch (args[0].Substring(1))
                 {
-                    case "-s":
+                    case "s":
                         if (args.Length < 2)
                             throw new WrongCommandLineArguments("Folder path is not specified.");
-                        //SavingService.Save(args[1]);
+                        SavingService.Save(@args[1]);
                         break;
-                    case "-u":
+                    case "u":
                         if (args.Length < 2)
                         {
                             throw new WrongCommandLineArguments("File path is not specified.");
                         }
-                        else if (args.Length < 3)
+                        if (args.Length < 3)
                         {
-                            throw new WrongCommandLineArguments("Directory path is not specified.");
+                            UnpackingService.Unpack(args[1], null);
+                        } else
+                        {
+                            UnpackingService.Unpack(args[1], args[2]);
                         }
-                        Console.WriteLine("Unpacking {1}", args[1]);
                         break;
                     default:
                         throw new WrongCommandLineArguments("Arguments are not recognized.");
@@ -43,8 +46,9 @@ namespace DirectoryTool
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                InfoService.ShowErrorMessage(e.Message);
             }
+            Console.ReadKey();
         }
     }
 }

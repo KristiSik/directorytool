@@ -11,6 +11,7 @@ namespace DirectoryTool.Services
     {
         public void Save(string folderPath)
         {
+            folderPath = Path.GetFullPath(folderPath);
             Folder folder;
             FileStream fileStream = new FileStream("datafile.dat", FileMode.Create);
             BinaryFormatter formatter = new BinaryFormatter();
@@ -18,7 +19,7 @@ namespace DirectoryTool.Services
             {
                 folder = new Folder
                 {
-                    Name = folderPath.Split(Path.DirectorySeparatorChar).Last() ?? folderPath,
+                    Name = folderPath.Split(Path.DirectorySeparatorChar).Last(),
                     SubFolders = GetSubFolders(folderPath),
                     Files = GetFiles(folderPath)
                 };
@@ -39,8 +40,6 @@ namespace DirectoryTool.Services
         }
         private List<Folder> GetSubFolders(string folderPath)
         {
-            if (!Directory.Exists(folderPath))
-                throw new DirectoryNotFoundException("Directory not found.");
             string[] subDirectories = Directory.GetDirectories(@folderPath);
             if (subDirectories.Length == 0)
             {
