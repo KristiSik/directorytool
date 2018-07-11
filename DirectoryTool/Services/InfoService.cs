@@ -11,17 +11,25 @@ namespace DirectoryTool.Services
         private static Dictionary<string, string> Commands { get; set; }
         static InfoService()
         {
-            Commands = new Dictionary<string, string>();
-            Commands.Add("-s <folder path>", "saving folder (also files and subfolders) into file");
-            Commands.Add("-u <file path> <directory path>", "unpacking folder from file into selected directory");
+            Commands = new Dictionary<string, string>
+            {
+                { "-s <folder path>", "saving folder (including files and subfolders) into file" },
+                { "-u <file path> <directory path>", "unpacking folder from file into selected directory" }
+            };
         }
         public static void ShowHelpMessage()
         {
             Console.WriteLine("Directory Tool usage:");
             foreach(var command in Commands)
             {
-                Console.WriteLine(" {0} — {1}", command.Key, command.Value);
+                Console.WriteLine("  {0} — {1}", command.Key, command.Value);
             }
+        }
+        public static void ShowErrorMessage(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
     }
 }
