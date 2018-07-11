@@ -11,20 +11,14 @@ namespace DirectoryTool.Services
 {
     public class SavingService
     {
+
         public void Save(string folderPath)
         {
             Folder folder = new Folder
             {
                 Name = "12345",
                 SubFolders = GetSubFolders(folderPath),
-                Files = new List<File>()
-                {
-                    new File()
-                    {
-                        Name = "file.png",
-                        Content = System.IO.File.ReadAllBytes(@"D:\prog\DirectoryTool\DirectoryTool\bin\Debug\2.jpg")
-                    }
-                }
+                Files = GetFiles(folderPath)
             };
             FileStream fileStream = new FileStream("datafile.dat", FileMode.OpenOrCreate);
             BinaryFormatter formatter = new BinaryFormatter();
@@ -54,10 +48,28 @@ namespace DirectoryTool.Services
                 folders.Add(new Folder()
                 {
                     Name = subFolderPath.Split(Path.DirectorySeparatorChar).Last(),
-                    SubFolders = GetSubFolders(subFolderPath)
+                    SubFolders = GetSubFolders(subFolderPath),
+                    Files = GetFiles(subFolderPath)
                 });
             }
             return folders;
+        }
+        private List<File> GetFiles(string folderPath)
+        {
+            string[] filesInDirectory = Directory.GetFiles(folderPath);
+            if (filesInDirectory.Length == 0)
+            {
+                return null;
+            }
+            List<File> files = new List<File>();
+            foreach(string filePath in filesInDirectory)
+            {
+                files.Add(new File() {
+                    Name = filePath.Split(Path.DirectorySeparatorChar).Last(),
+                    Content = System.IO.File.ReadAllBytes(filePath)
+                });
+            }
+            return files;
         }
     }
 }
