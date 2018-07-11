@@ -50,7 +50,8 @@ namespace DirectoryTool.Services
             {
                 foreach (File file in rootFolder.Files)
                 {
-                    //FileStream fileInFolder = new FileStream();
+                    string filePath = string.Format("{0}{1}{2}", newPath, Path.DirectorySeparatorChar, file.Name);
+                    System.IO.File.WriteAllBytes(filePath, file.Content);
                 }
             }
         }
