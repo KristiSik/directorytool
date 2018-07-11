@@ -10,6 +10,7 @@ namespace DirectoryTool
 {
     class Program
     {
+        private static SavingService SavingService { get; set; } = new SavingService();
         static void Main(string[] args)
         {
             try
@@ -35,6 +36,7 @@ namespace DirectoryTool
             {
                 Console.WriteLine(e.Message);
             }
+            SavingService.Save(@"D:\prog\MyTestFolder");
             Console.ReadKey();
         }
     }
