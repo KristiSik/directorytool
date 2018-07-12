@@ -33,7 +33,7 @@ namespace DirectoryTool.Services
                     SubFolders = GetSubFolders(folderPath),
                     Files = GetFiles(folderPath)
                 };
-                InfoService.ReadingFinished = true;
+                InfoService.ProcessFinished = true;
                 InfoService.ShowStatusMessage("Saving...");
                 formatter.Serialize(fileStream, folder);
             }

@@ -23,10 +23,14 @@ namespace DirectoryTool.Services
         private static long _numberOfBytesToProcess;
         public static long ProcessedBytes { get; set; } = 0;
 
-        public static void EstimateWorkToBeDone(string folderPath)
+        public static void EstimateWorkToSave(string folderPath)
         {
             folderPath = Path.GetFullPath(folderPath);
             ScanSubFolders(folderPath);
+        }
+        public static void EstimateWorkToUnpack(string filePath)
+        {
+            NumberOfBytesToProcess = new FileInfo(filePath).Length;
         }
         private static void ScanSubFolders(string folderPath)
         {

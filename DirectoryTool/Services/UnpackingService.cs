@@ -10,6 +10,7 @@ namespace DirectoryTool.Services
     {
         public void Unpack(string filePath, string directoryPath)
         {
+            InfoService.InitializeProgressMessageThread();
             if (String.IsNullOrEmpty(directoryPath))
             {
                 directoryPath = Directory.GetCurrentDirectory();
@@ -18,6 +19,7 @@ namespace DirectoryTool.Services
             FileStream fileStream = new FileStream(filePath, FileMode.Open);
             try
             {
+                InfoService.ShowStatusMessage("Reading...");
                 BinaryFormatter formatter = new BinaryFormatter();
                 folder = (Folder)formatter.Deserialize(fileStream);
             }
@@ -33,7 +35,11 @@ namespace DirectoryTool.Services
             {
                 fileStream.Close();
             }
+            InfoService.ShowStatusMessage("Unpacking...");
             CreateFoldersAndFilesFromInstance(folder, directoryPath);
+            InfoService.ProcessFinished = true;
+            EstimatingService.ProcessedBytes = EstimatingService.NumberOfBytesToProcess;
+            InfoService.ShowStatusMessage("Done.");
         }
         private void CreateFoldersAndFilesFromInstance(Folder rootFolder, string directoryPath)
         {
@@ -50,8 +56,9 @@ namespace DirectoryTool.Services
             {
                 foreach (File file in rootFolder.Files)
                 {
-                    string filePath = string.Format("{0}{1}{2}", newPath, Path.DirectorySeparatorChar, file.Name);
-                    System.IO.File.WriteAllBytes(filePath, file.Content);
+                    string fileName = $"{newPath}{Path.DirectorySeparatorChar}{file.Name}";
+                    System.IO.File.WriteAllBytes(fileName, file.Content);
+                    EstimatingService.ProcessedBytes += new FileInfo(fileName).Length;
                 }
             }
         }
