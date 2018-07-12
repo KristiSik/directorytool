@@ -49,6 +49,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\InfoService.cs" />
+    <Compile Include="Services\EstimatingService.cs" />
     <Compile Include="Services\SavingService.cs" />
     <Compile Include="Services\UnpackingService.cs" />
   </ItemGroup>

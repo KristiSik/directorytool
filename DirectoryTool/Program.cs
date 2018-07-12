@@ -1,6 +1,7 @@
 ﻿using DirectoryTool.Exceptions;
 using DirectoryTool.Services;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 
@@ -10,8 +11,11 @@ namespace DirectoryTool
     {
         private static SavingService SavingService { get; set; } = new SavingService();
         private static UnpackingService UnpackingService { get; set; } = new UnpackingService();
+        private static EstimatingService EstimatingService { get; set; } = new EstimatingService();
         static void Main(string[] args)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             try
             {
                 if (args.Length == 0)
@@ -21,6 +25,7 @@ namespace DirectoryTool
                     case "s":
                         if (args.Length < 2)
                             throw new WrongCommandLineArguments("Folder path is not specified.");
+                        EstimatingService.EstimateWorkToBeDone(@args[1]);
                         if (args.Length < 3)
                         {
                             SavingService.Save(@args[1], null);
@@ -54,6 +59,10 @@ namespace DirectoryTool
             {
                 InfoService.ShowErrorMessage(e.Message);
             }
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed);
+
+            Console.ReadLine();
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading.Tasks;
 
 namespace DirectoryTool.Services
 {
@@ -71,12 +73,36 @@ namespace DirectoryTool.Services
                 return null;
             }
             List<File> files = new List<File>();
-            foreach(string filePath in filesInDirectory)
+            try
             {
-                files.Add(new File() {
-                    Name = filePath.Split(Path.DirectorySeparatorChar).Last(),
-                    Content = System.IO.File.ReadAllBytes(filePath)
-                });
+                var exceptions = new ConcurrentQueue<Exception>();
+                Parallel.ForEach(
+                    filesInDirectory,
+                    new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
+                    (filePath) =>
+                    {
+                        try
+                        {
+                            files.Add(new File()
+                            {
+                                Name = filePath.Split(Path.DirectorySeparatorChar).Last(),
+                                Content = System.IO.File.ReadAllBytes(filePath)
+                            });
+                        }
+                        catch (Exception e)
+                        {
+                            exceptions.Enqueue(e);
+                        }
+                    });
+                if (exceptions.Count != 0)
+                    throw new AggregateException(exceptions);
+            }
+            catch(AggregateException e)
+            {
+                foreach(var exception in e.Flatten().InnerExceptions)
+                {
+                    InfoService.ShowErrorMessage(exception.Message);
+                }
             }
             return files;
         }
