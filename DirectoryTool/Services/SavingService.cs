@@ -25,6 +25,7 @@ namespace DirectoryTool.Services
             BinaryFormatter formatter = new BinaryFormatter();
             try
             {
+                InfoService.ShowStatusMessage("Reading...");
                 folder = new Folder
                 {
                     Name = rootFolderName,
@@ -32,6 +33,7 @@ namespace DirectoryTool.Services
                     Files = GetFiles(folderPath)
                 };
                 InfoService.ReadingFinished = true;
+                InfoService.ShowStatusMessage("Saving...");
                 formatter.Serialize(fileStream, folder);
             }
             catch(DirectoryNotFoundException e)
@@ -45,6 +47,7 @@ namespace DirectoryTool.Services
             finally
             {
                 fileStream.Close();
+                InfoService.ShowStatusMessage("Done.");
             }
         }
         private List<Folder> GetSubFolders(string folderPath)
@@ -84,6 +87,7 @@ namespace DirectoryTool.Services
                     {
                         try
                         {
+                            InfoService.FileInProcess = filePath;
                             lock (files)
                             {
                                 files.Add(new File()

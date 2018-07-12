@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -9,7 +10,8 @@ namespace DirectoryTool.Services
 {
     public static class InfoService
     {
-        private static readonly int lengthOfProgressBar = 20;
+        public static string FileInProcess { get; set; }
+        private static readonly int lengthOfProgressBar = 40;
         private static int CursorTopPosition;
         private static Dictionary<string, string> Commands { get; set; }
         public static bool ReadingFinished { get; set; } = false;
@@ -49,7 +51,7 @@ namespace DirectoryTool.Services
                 int i = 0;
                 StringBuilder progressBar = new StringBuilder("[");
                 long lengthOfFilledPart = (ReadingFinished)?lengthOfProgressBar: (long) (lengthOfProgressBar * ((EstimatingService.NumberOfBytesToProcess == 0)?0:((double) EstimatingService.ProcessedBytes / EstimatingService.NumberOfBytesToProcess)));
-                int percents = Math.Min((EstimatingService.ProcessedBytes == 0) ? 0 : ((int)(100 * (double)(EstimatingService.NumberOfBytesToProcess / EstimatingService.ProcessedBytes))), 100);
+                int percents = Math.Min((EstimatingService.ProcessedBytes == 0) ? 0 : ((int)(100 * (double)EstimatingService.ProcessedBytes / EstimatingService.NumberOfBytesToProcess)), 100);
                 while (EstimatingService.ProcessedBytes > 0 && i < lengthOfFilledPart)
                 {
                     progressBar.Append('#');
@@ -60,16 +62,30 @@ namespace DirectoryTool.Services
                     progressBar.Append('.');
                     i++;
                 }
-                progressBar.Append($"] {percents}%");
-                Console.CursorTop = CursorTopPosition;
-                Console.CursorLeft = 0;
-                Console.WriteLine(progressBar);
+                if (ReadingFinished)
+                {
+                    FileInProcess = "";
+                }
+                progressBar.Append($"] {percents}% {Path.GetFileName(FileInProcess)}");
+                ClearConsoleLine(CursorTopPosition);
+                Console.Write(progressBar);
                 Thread.Sleep(100);
                 if (ReadingFinished && lengthOfFilledPart == lengthOfProgressBar)
                 {
                     break;
                 }
             } while (true);
+        }
+        public static void ShowStatusMessage(string message)
+        {
+            ClearConsoleLine(CursorTopPosition + 1);
+            Console.Write(message);
+        }
+        private static void ClearConsoleLine(int linePosition)
+        {
+            Console.SetCursorPosition(0, linePosition);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, linePosition);
         }
     }
 }
