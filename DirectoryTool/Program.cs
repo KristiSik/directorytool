@@ -13,7 +13,6 @@ namespace DirectoryTool
         {
             try
             {
-                InfoService.InitializeProgressMessageThread();
                 if (args.Length == 0)
                     throw new WrongCommandLineArguments("Arguments are not specified.");
                 switch (args[0].Substring(1))

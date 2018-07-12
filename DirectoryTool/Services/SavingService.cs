@@ -14,6 +14,7 @@ namespace DirectoryTool.Services
     {
         public void Save(string folderPath, string fileName)
         {
+            InfoService.InitializeProgressMessageThread();
             folderPath = Path.GetFullPath(folderPath);
             string rootFolderName = folderPath.Split(Path.DirectorySeparatorChar).Last();
             if (String.IsNullOrEmpty(fileName))
