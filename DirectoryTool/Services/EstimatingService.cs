@@ -9,7 +9,17 @@ namespace DirectoryTool.Services
 {
     public static class EstimatingService
     {
-        public static long NumberOfBytesToProcess { get => _numberOfBytesToProcess; private set => _numberOfBytesToProcess = value; }
+        public static long NumberOfBytesToProcess
+        {
+            get
+            {
+                return _numberOfBytesToProcess;
+            }
+            private set
+            {
+                _numberOfBytesToProcess = value;
+            }
+        }
         private static long _numberOfBytesToProcess;
         public static long ProcessedBytes { get; set; } = 0;
 
