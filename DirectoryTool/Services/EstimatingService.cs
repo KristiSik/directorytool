@@ -7,21 +7,18 @@ using System.Threading.Tasks;
 
 namespace DirectoryTool.Services
 {
-    public class EstimatingService
+    public static class EstimatingService
     {
-        public long NumberOfBytesToProcess { get => _numberOfBytesToProcess; private set => _numberOfBytesToProcess = value; }
-        private long _numberOfBytesToProcess;
+        public static long NumberOfBytesToProcess { get => _numberOfBytesToProcess; private set => _numberOfBytesToProcess = value; }
+        private static long _numberOfBytesToProcess;
+        public static long ProcessedBytes { get; set; } = 0;
 
-        public void EstimateWorkToBeDone(string folderPath)
+        public static void EstimateWorkToBeDone(string folderPath)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
             folderPath = Path.GetFullPath(folderPath);
             ScanSubFolders(folderPath);
-            sw.Stop();
-            System.Console.WriteLine("Parallel: {0} ({1} bytes)", sw.Elapsed, NumberOfBytesToProcess);
         }
-        private void ScanSubFolders(string folderPath)
+        private static void ScanSubFolders(string folderPath)
         {
             string[] subDirectories = Directory.GetDirectories(@folderPath);
             ScanFiles(folderPath);
@@ -33,7 +30,7 @@ namespace DirectoryTool.Services
                 }
             }
         }
-        private void ScanFiles(string folderPath)
+        private static void ScanFiles(string folderPath)
         {
             string[] filesInDirectory = Directory.GetFiles(folderPath);
             if (filesInDirectory.Length != 0)

@@ -31,6 +31,7 @@ namespace DirectoryTool.Services
                     SubFolders = GetSubFolders(folderPath),
                     Files = GetFiles(folderPath)
                 };
+                InfoService.ReadingFinished = true;
                 formatter.Serialize(fileStream, folder);
             }
             catch(DirectoryNotFoundException e)
@@ -83,15 +84,22 @@ namespace DirectoryTool.Services
                     {
                         try
                         {
-                            files.Add(new File()
+                            lock (files)
                             {
-                                Name = filePath.Split(Path.DirectorySeparatorChar).Last(),
-                                Content = System.IO.File.ReadAllBytes(filePath)
-                            });
+                                files.Add(new File()
+                                {
+                                    Name = filePath.Split(Path.DirectorySeparatorChar).Last(),
+                                    Content = System.IO.File.ReadAllBytes(filePath)
+                                });
+                            }
                         }
                         catch (Exception e)
                         {
                             exceptions.Enqueue(e);
+                        }
+                        finally
+                        {
+                            EstimatingService.ProcessedBytes += new FileInfo(filePath).Length;
                         }
                     });
                 if (exceptions.Count != 0)

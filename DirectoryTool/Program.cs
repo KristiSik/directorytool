@@ -2,8 +2,6 @@
 using DirectoryTool.Services;
 using System;
 using System.Diagnostics;
-using System.Globalization;
-using System.Threading;
 
 namespace DirectoryTool
 {
@@ -11,13 +9,11 @@ namespace DirectoryTool
     {
         private static SavingService SavingService { get; set; } = new SavingService();
         private static UnpackingService UnpackingService { get; set; } = new UnpackingService();
-        private static EstimatingService EstimatingService { get; set; } = new EstimatingService();
         static void Main(string[] args)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
             try
             {
+                InfoService.InitializeProgressMessageThread();
                 if (args.Length == 0)
                     throw new WrongCommandLineArguments("Arguments are not specified.");
                 switch (args[0].Substring(1))
@@ -29,7 +25,8 @@ namespace DirectoryTool
                         if (args.Length < 3)
                         {
                             SavingService.Save(@args[1], null);
-                        } else
+                        }
+                        else
                         {
                             SavingService.Save(@args[1], @args[2]);
                         }
@@ -42,7 +39,8 @@ namespace DirectoryTool
                         if (args.Length < 3)
                         {
                             UnpackingService.Unpack(@args[1], null);
-                        } else
+                        }
+                        else
                         {
                             UnpackingService.Unpack(@args[1], @args[2]);
                         }
@@ -51,7 +49,8 @@ namespace DirectoryTool
                         throw new WrongCommandLineArguments("Arguments are not recognized.");
                 }
             }
-            catch (WrongCommandLineArguments e) {
+            catch (WrongCommandLineArguments e)
+            {
                 InfoService.ShowErrorMessage(e.Message);
                 InfoService.ShowHelpMessage();
             }
@@ -59,10 +58,6 @@ namespace DirectoryTool
             {
                 InfoService.ShowErrorMessage(e.Message);
             }
-            sw.Stop();
-            Console.WriteLine(sw.Elapsed);
-
-            Console.ReadLine();
         }
     }
 }
