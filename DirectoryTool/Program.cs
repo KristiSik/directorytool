@@ -1,8 +1,7 @@
 ﻿using DirectoryTool.Exceptions;
 using DirectoryTool.Services;
 using System;
-using System.Globalization;
-using System.Threading;
+using System.Diagnostics;
 
 namespace DirectoryTool
 {
@@ -14,6 +13,7 @@ namespace DirectoryTool
         {
             try
             {
+                InfoService.InitializeProgressMessageThread();
                 if (args.Length == 0)
                     throw new WrongCommandLineArguments("Arguments are not specified.");
                 switch (args[0].Substring(1))
@@ -21,10 +21,12 @@ namespace DirectoryTool
                     case "s":
                         if (args.Length < 2)
                             throw new WrongCommandLineArguments("Folder path is not specified.");
+                        EstimatingService.EstimateWorkToBeDone(@args[1]);
                         if (args.Length < 3)
                         {
                             SavingService.Save(@args[1], null);
-                        } else
+                        }
+                        else
                         {
                             SavingService.Save(@args[1], @args[2]);
                         }
@@ -37,7 +39,8 @@ namespace DirectoryTool
                         if (args.Length < 3)
                         {
                             UnpackingService.Unpack(@args[1], null);
-                        } else
+                        }
+                        else
                         {
                             UnpackingService.Unpack(@args[1], @args[2]);
                         }
@@ -46,7 +49,8 @@ namespace DirectoryTool
                         throw new WrongCommandLineArguments("Arguments are not recognized.");
                 }
             }
-            catch (WrongCommandLineArguments e) {
+            catch (WrongCommandLineArguments e)
+            {
                 InfoService.ShowErrorMessage(e.Message);
                 InfoService.ShowHelpMessage();
             }
