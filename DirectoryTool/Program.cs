@@ -20,7 +20,7 @@ namespace DirectoryTool
                     case "s":
                         if (args.Length < 2)
                             throw new WrongCommandLineArguments("Folder path is not specified.");
-                        EstimatingService.EstimateWorkToBeDone(@args[1]);
+                        EstimatingService.EstimateWorkToSave(@args[1]);
                         if (args.Length < 3)
                         {
                             SavingService.Save(@args[1], null);
@@ -32,9 +32,8 @@ namespace DirectoryTool
                         break;
                     case "u":
                         if (args.Length < 2)
-                        {
                             throw new WrongCommandLineArguments("File path is not specified.");
-                        }
+                        EstimatingService.EstimateWorkToUnpack(@args[1]);
                         if (args.Length < 3)
                         {
                             UnpackingService.Unpack(@args[1], null);

@@ -14,7 +14,7 @@ namespace DirectoryTool.Services
         private static readonly int lengthOfProgressBar = 40;
         private static int CursorTopPosition;
         private static Dictionary<string, string> Commands { get; set; }
-        public static bool ReadingFinished { get; set; } = false;
+        public static bool ProcessFinished { get; set; } = false;
         static InfoService()
         {
             Commands = new Dictionary<string, string>
@@ -50,7 +50,7 @@ namespace DirectoryTool.Services
             {
                 int i = 0;
                 StringBuilder progressBar = new StringBuilder("[");
-                long lengthOfFilledPart = (ReadingFinished)?lengthOfProgressBar: (long) (lengthOfProgressBar * ((EstimatingService.NumberOfBytesToProcess == 0)?0:((double) EstimatingService.ProcessedBytes / EstimatingService.NumberOfBytesToProcess)));
+                long lengthOfFilledPart = (ProcessFinished) ?lengthOfProgressBar: (long) (lengthOfProgressBar * ((EstimatingService.NumberOfBytesToProcess == 0)?0:((double) EstimatingService.ProcessedBytes / EstimatingService.NumberOfBytesToProcess)));
                 int percents = Math.Min((EstimatingService.ProcessedBytes == 0) ? 0 : ((int)(100 * (double)EstimatingService.ProcessedBytes / EstimatingService.NumberOfBytesToProcess)), 100);
                 while (EstimatingService.ProcessedBytes > 0 && i < lengthOfFilledPart)
                 {
@@ -62,7 +62,7 @@ namespace DirectoryTool.Services
                     progressBar.Append('.');
                     i++;
                 }
-                if (ReadingFinished)
+                if (ProcessFinished)
                 {
                     FileInProcess = "";
                 }
@@ -70,7 +70,7 @@ namespace DirectoryTool.Services
                 ClearConsoleLine(CursorTopPosition);
                 Console.Write(progressBar);
                 Thread.Sleep(100);
-                if (ReadingFinished && lengthOfFilledPart == lengthOfProgressBar)
+                if (ProcessFinished && lengthOfFilledPart == lengthOfProgressBar)
                 {
                     break;
                 }
